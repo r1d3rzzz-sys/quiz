@@ -110,7 +110,6 @@
     <div class="divider"></div>
     <div class="section-label">Блок 2 — Пригодность к работе</div>
 
-    <!-- Q3 -->
     <div class="question-block">
       <div class="q-num">Вопрос 3 из 12</div>
       <div class="q-text">Работа предполагает ежедневную переписку с большим количеством незнакомых людей, большинство из которых не ответит или откажется. Какое описание ближе всего к тому, на что вы рассчитываете? <span class="required-star">*</span></div>
@@ -123,7 +122,6 @@
       <div class="field-error" id="err_q3">Выберите один из вариантов</div>
     </div>
 
-    <!-- Q4 -->
     <div class="question-block">
       <div class="q-num">Вопрос 4 из 12</div>
       <div class="q-text">Почему вас заинтересовала эта работа и на какой срок вы рассматриваете сотрудничество? <span class="required-star">*</span></div>
@@ -136,7 +134,6 @@
       <div class="field-error" id="err_q4">Выберите один из вариантов</div>
     </div>
 
-    <!-- Q5 -->
     <div class="question-block">
       <div class="q-num">Вопрос 5 из 12</div>
       <div class="q-text">Сколько времени в день вы готовы уделять этой работе? <span class="required-star">*</span></div>
@@ -149,7 +146,6 @@
       <div class="field-error" id="err_q5">Выберите один из вариантов</div>
     </div>
 
-    <!-- Q6 -->
     <div class="question-block">
       <div class="q-num">Вопрос 6 из 12</div>
       <div class="q-text">Как вы организуете свой рабочий день без руководителя рядом? <span class="required-star">*</span></div>
@@ -165,7 +161,6 @@
     <div class="divider"></div>
     <div class="section-label">Блок 3 — Рабочие ситуации</div>
 
-    <!-- Q7 -->
     <div class="question-block">
       <div class="q-num">Вопрос 7 из 12</div>
       <div class="q-text">Каждый день вы отправляете 100+ одинаковых сообщений, большинство игнорируют. Как вы к этому относитесь? <span class="required-star">*</span></div>
@@ -178,7 +173,6 @@
       <div class="field-error" id="err_q7">Выберите один из вариантов</div>
     </div>
 
-    <!-- Q8 -->
     <div class="question-block">
       <div class="q-num">Вопрос 8 из 12</div>
       <div class="q-text">За день вы написали 80 людям — никто не ответил, двое нагрубили. Что будете делать завтра? <span class="required-star">*</span></div>
@@ -191,7 +185,6 @@
       <div class="field-error" id="err_q8">Выберите один из вариантов</div>
     </div>
 
-    <!-- Q9 -->
     <div class="question-block">
       <div class="q-num">Вопрос 9 из 12</div>
       <div class="q-text">Вам дали скрипт, но вы чувствуете что он не работает. Что делаете? <span class="required-star">*</span></div>
@@ -204,7 +197,6 @@
       <div class="field-error" id="err_q9">Выберите один из вариантов</div>
     </div>
 
-    <!-- Q10 -->
     <div class="question-block">
       <div class="q-num">Вопрос 10 из 12</div>
       <div class="q-text">Руководитель говорит: "Твои тексты слабые, люди не отвечают." Что ответишь? <span class="required-star">*</span></div>
@@ -217,7 +209,6 @@
       <div class="field-error" id="err_q10">Выберите один из вариантов</div>
     </div>
 
-    <!-- Q11 -->
     <div class="question-block">
       <div class="q-num">Вопрос 11 из 12</div>
       <div class="q-text">Три недели работы, результата почти нет. Руководитель говорит что это нормально для старта. Коллеги уже закрывают сделки. Что происходит у вас в голове? <span class="required-star">*</span></div>
@@ -230,7 +221,6 @@
       <div class="field-error" id="err_q11">Выберите один из вариантов</div>
     </div>
 
-    <!-- Q12 -->
     <div class="question-block">
       <div class="q-num">Вопрос 12 из 12</div>
       <div class="q-text">Вам нужно написать первое сообщение незнакомому человеку от лица развлекательной онлайн-платформы. Какой вариант выберете? <span class="required-star">*</span></div>
@@ -268,9 +258,11 @@
   var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz-sZzJPlQRSrKVMsO6J5jEAGaORzmFwv192VP3BsSO_twZm32p9RV2XMFStnOtih_j/exec';
 
   var SCORES = {};
+
   function getUTM(param) {
-  return new URLSearchParams(window.location.search).get(param) || '';
-}
+    return new URLSearchParams(window.location.search).get(param) || '';
+  }
+
   function selectChoice(label, group) {
     document.querySelectorAll('#' + group + ' .choice-label').forEach(function(l) {
       l.classList.remove('selected');
@@ -374,9 +366,9 @@
       q12_first_message: getRadio('q12'),
       total_score: total,
       segment: segment,
-utm_source: getUTM('utm_source'),
-utm_medium: getUTM('utm_medium'),
-utm_campaign: getUTM('utm_campaign')
+      utm_source: getUTM('utm_source'),
+      utm_medium: getUTM('utm_medium'),
+      utm_campaign: getUTM('utm_campaign')
     };
 
     var btn = document.getElementById('submit-btn');
