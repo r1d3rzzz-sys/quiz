@@ -268,6 +268,8 @@
   var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz-sZzJPlQRSrKVMsO6J5jEAGaORzmFwv192VP3BsSO_twZm32p9RV2XMFStnOtih_j/exec';
 
   var SCORES = {};
+  function getUTM(param) {
+  return new URLSearchParams(window.location.search).get(param) || '';
 
   function selectChoice(label, group) {
     document.querySelectorAll('#' + group + ' .choice-label').forEach(function(l) {
@@ -371,7 +373,10 @@
       q11_stress_week: getRadio('q11'),
       q12_first_message: getRadio('q12'),
       total_score: total,
-      segment: segment
+      segment: segment,
+utm_source: getUTM('utm_source'),
+utm_medium: getUTM('utm_medium'),
+utm_campaign: getUTM('utm_campaign')
     };
 
     var btn = document.getElementById('submit-btn');
