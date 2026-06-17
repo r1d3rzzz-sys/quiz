@@ -270,7 +270,7 @@
   var SCORES = {};
   function getUTM(param) {
   return new URLSearchParams(window.location.search).get(param) || '';
-
+}
   function selectChoice(label, group) {
     document.querySelectorAll('#' + group + ' .choice-label').forEach(function(l) {
       l.classList.remove('selected');
