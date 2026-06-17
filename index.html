@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Анкета кандидата — Outreach команда</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f0f11; --bg2: #17171a; --bg3: #1e1e22;
+    --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.14);
+    --text: #f0eff4; --muted: #8b8a96;
+    --accent: #7c6af7; --accent2: #a594f9;
+    --accent-bg: rgba(124,106,247,0.12); --accent-border: rgba(124,106,247,0.35);
+    --success: #22c97a; --success-bg: rgba(34,201,122,0.1);
+    --error: #f06060; --radius-sm: 8px;
+  }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 16px; line-height: 1.6; min-height: 100vh; }
+  .hero { border-bottom: 1px solid var(--border); padding: 56px 24px 48px; text-align: center; }
+  .hero-badge { display: inline-block; background: var(--accent-bg); border: 1px solid var(--accent-border); color: var(--accent2); font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 14px; border-radius: 100px; margin-bottom: 24px; }
+  .hero h1 { font-size: clamp(26px, 5vw, 40px); font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 16px; }
+  .hero p { color: var(--muted); font-size: 16px; max-width: 520px; margin: 0 auto 32px; line-height: 1.7; }
+  .meta-row { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; }
+  .meta-item { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--muted); }
+  .meta-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  .container { max-width: 680px; margin: 0 auto; padding: 48px 24px 80px; }
+  .progress-wrap { margin-bottom: 40px; }
+  .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .progress-label { font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+  .progress-count { font-size: 13px; color: var(--muted); }
+  .progress-track { height: 3px; background: var(--border2); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s; width: 0%; }
+  .section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent2); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+  .question-block { margin-bottom: 36px; }
+  .q-num { font-size: 11px; font-weight: 600; color: var(--accent2); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+  .q-text { font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.55; margin-bottom: 14px; }
+  .q-hint { font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
+  .required-star { color: var(--error); margin-left: 3px; }
+  .choices { display: flex; flex-direction: column; gap: 8px; }
+  .choice-label { display: flex; align-items: flex-start; gap: 12px; padding: 13px 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: border-color 0.15s, background 0.15s; user-select: none; }
+  .choice-label:hover { border-color: var(--border2); background: var(--bg3); }
+  .choice-label input { display: none; }
+  .choice-label.selected { border-color: var(--accent); background: var(--accent-bg); }
+  .choice-marker { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--border2); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: border-color 0.15s, background 0.15s; }
+  .choice-label.selected .choice-marker { border-color: var(--accent); background: var(--accent); }
+  .choice-marker-inner { width: 7px; height: 7px; border-radius: 50%; background: white; opacity: 0; transition: opacity 0.15s; }
+  .choice-label.selected .choice-marker-inner { opacity: 1; }
+  .choice-text { font-size: 14px; color: var(--text); line-height: 1.5; }
+  input[type="text"] { width: 100%; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-family: inherit; font-size: 14px; padding: 12px 16px; outline: none; transition: border-color 0.15s; }
+  input[type="text"]:focus { border-color: var(--accent); }
+  input[type="text"]::placeholder { color: var(--muted); }
+  .field-error { font-size: 12px; color: var(--error); margin-top: 6px; display: none; }
+  .field-error.show { display: block; }
+  .divider { height: 1px; background: var(--border); margin: 40px 0; }
+  .submit-area { margin-top: 40px; }
+  .submit-btn { display: inline-flex; align-items: center; gap: 9px; background: var(--accent); color: white; border: none; border-radius: var(--radius-sm); font-family: inherit; font-size: 15px; font-weight: 500; padding: 14px 32px; cursor: pointer; transition: opacity 0.15s; width: 100%; justify-content: center; }
+  .submit-btn:hover { opacity: 0.9; }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .submit-note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 12px; line-height: 1.5; }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(10px); background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 12px 20px; font-size: 13px; color: var(--text); opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; z-index: 100; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.error { border-color: var(--error); color: var(--error); }
+  .success-screen { display: none; text-align: center; padding: 80px 24px; max-width: 500px; margin: 0 auto; }
+  .success-icon { width: 64px; height: 64px; border-radius: 50%; background: var(--success-bg); border: 1px solid rgba(34,201,122,0.25); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; }
+  .success-screen h2 { font-size: 24px; font-weight: 600; margin-bottom: 12px; }
+  .success-screen p { color: var(--muted); font-size: 15px; line-height: 1.7; }
+  .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (max-width: 600px) { .hero { padding: 40px 20px 36px; } .container { padding: 36px 20px 60px; } }
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge">Открытый набор</div>
+  <h1>Анкета кандидата</h1>
+  <p>Заполните анкету внимательно — на основе ваших ответов мы решаем, кого приглашать на следующий этап. Среднее время заполнения — 5–10 минут.</p>
+  <div class="meta-row">
+    <div class="meta-item"><div class="meta-dot"></div>12 вопросов</div>
+    <div class="meta-item"><div class="meta-dot"></div>5–10 минут</div>
+    <div class="meta-item"><div class="meta-dot"></div>Удалённая работа</div>
+  </div>
+</div>
+
+<div class="container" id="main-form">
+  <div class="progress-wrap">
+    <div class="progress-header">
+      <span class="progress-label">Прогресс</span>
+      <span class="progress-count" id="progress-count">0 / 12</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+
+  <form id="quiz-form" novalidate>
+    <div class="section-label">Блок 1 — О вас</div>
+
+    <div class="question-block">
+      <div class="q-num">Вопрос 1 из 12</div>
+      <div class="q-text">Имя и фамилия <span class="required-star">*</span></div>
+      <input type="text" id="q_name" placeholder="Иван Иванов" oninput="updateProgress()" />
+      <div class="field-error" id="err_name">Пожалуйста, введите имя</div>
+    </div>
+
+    <div class="question-block">
+      <div class="q-num">Вопрос 2 из 12</div>
+      <div class="q-text">Ваш Telegram <span class="required-star">*</span></div>
+      <input type="text" id="q_tg" placeholder="@username" oninput="updateProgress()" />
+      <div class="field-error" id="err_tg">Укажите Telegram username</div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-label">Блок 2 — Пригодность к работе</div>
+
+    <!-- Q3 -->
+    <div class="question-block">
+      <div class="q-num">Вопрос 3 из 12</div>
+      <div class="q-text">Работа предполагает ежедневную переписку с большим количеством незнакомых людей, большинство из которых не ответит или откажется. Какое описание ближе всего к тому, на что вы рассчитываете? <span class="required-star">*</span></div>
+      <div class="choices" id="q3">
+        <label class="choice-label" onclick="selectChoice(this,'q3')"><input type="radio" name="q3" value="2"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Постепенный рост: первые недели уйдут на отработку, результат появится не сразу</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q3')"><input type="radio" name="q3" value="1"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Пока не уверен, хочу попробовать и разобраться по ходу</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q3')"><input type="radio" name="q3" value="0"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Быстрый старт: несколько дней обучения, потом стабильный доход</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q3')"><input type="radio" name="q3" value="-1"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Пассивный доход: настрою процесс — дальше он работает сам</span></label>
+      </div>
+      <div class="field-error" id="err_q3">Выберите один из вариантов</div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="question-block">
+      <div class="q-num">Вопрос 4 из 12</div>
+      <div class="q-text">Почему вас заинтересовала эта работа и на какой срок вы рассматриваете сотрудничество? <span class="required-star">*</span></div>
+      <div class="choices" id="q4">
+        <label class="choice-label" onclick="selectChoice(this,'q4')"><input type="radio" name="q4" value="2"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Хочу попробовать себя в продажах, интересен опыт в digital. Рассчитываю минимум на 3 месяца</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q4')"><input type="radio" name="q4" value="1"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Ищу удалённую работу с гибким графиком, готов работать долго</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q4')"><input type="radio" name="q4" value="0"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Нужны деньги прямо сейчас, рассматриваю на пару недель</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q4')"><input type="radio" name="q4" value="0"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Мне всё равно на чём зарабатывать, главное чтобы платили</span></label>
+      </div>
+      <div class="field-error" id="err_q4">Выберите один из вариантов</div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="question-block">
+      <div class="q-num">Вопрос 5 из 12</div>
+      <div class="q-text">Сколько времени в день вы готовы уделять этой работе? <span class="required-star">*</span></div>
+      <div class="choices" id="q5">
+        <label class="choice-label" onclick="selectChoice(this,'q5')"><input type="radio" name="q5" value="2"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">6–8 часов, другой занятости нет</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q5')"><input type="radio" name="q5" value="1"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">4–6 часов, есть другая работа или учёба на неполный день</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q5')"><input type="radio" name="q5" value="0"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">2–4 часа, работаю полный день на другом месте</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q5')"><input type="radio" name="q5" value="0"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Пока не определился</span></label>
+      </div>
+      <div class="field-error" id="err_q5">Выберите один из вариантов</div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="question-block">
+      <div class="q-num">Вопрос 6 из 12</div>
+      <div class="q-text">Как вы организуете свой рабочий день без руководителя рядом? <span class="required-star">*</span></div>
+      <div class="choices" id="q6">
+        <label class="choice-label" onclick="selectChoice(this,'q6')"><input type="radio" name="q6" value="2"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Составляю план на день заранее, работаю блоками, отслеживаю выполнение</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q6')"><input type="radio" name="q6" value="1"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Работаю по настроению, но обычно закрываю задачи</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q6')"><input type="radio" name="q6" value="1"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">У меня нестандартный режим — работаю ночью или вспышками, но объём закрываю</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q6')"><input type="radio" name="q6" value="0"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Мне нужны чёткие указания и контроль, иначе сложно сосредоточиться</span></label>
+      </div>
+      <div class="field-error" id="err_q6">Выберите один из вариантов</div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-label">Блок 3 — Рабочие ситуации</div>
+
+    <!-- Q7 -->
+    <div class="question-block">
+      <div class="q-num">Вопрос 7 из 12</div>
+      <div class="q-text">Каждый день вы отправляете 100+ одинаковых сообщений, большинство игнорируют. Как вы к этому относитесь? <span class="required-star">*</span></div>
+      <div class="choices" id="q7">
+        <label class="choice-label" onclick="selectChoice(this,'q7')"><input type="radio" name="q7" value="2"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Работал в похожих условиях — колл-центр, модерация, склад. Знаю как справляться, разбиваю день на блоки</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q7')"><input type="radio" name="q7" value="1"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Не пробовал, но думаю справлюсь — я усидчивый</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q7')"><input type="radio" name="q7" value="0"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Буду честен — монотонная работа меня быстро утомляет</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q7')"><input type="radio" name="q7" value="0"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Настрою автоматизацию, чтобы не делать это вручную</span></label>
+      </div>
+      <div class="field-error" id="err_q7">Выберите один из вариантов</div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="question-block">
+      <div class="q-num">Вопрос 8 из 12</div>
+      <div class="q-text">За день вы написали 80 людям — никто не ответил, двое нагрубили. Что будете делать завтра? <span class="required-star">*</span></div>
+      <div class="choices" id="q8">
+        <label class="choice-label" onclick="selectChoice(this,'q8')"><input type="radio" name="q8" value="2"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Проанализирую что пошло не так — может проблема в тексте или времени. Сфокусируюсь на тёплых контактах и продолжу</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q8')"><input type="radio" name="q8" value="1"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Расстроюсь, но попробую ещё раз</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q8')"><input type="radio" name="q8" value="0"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Скорее всего начну искать другую работу — это не моё</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q8')"><input type="radio" name="q8" value="0"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Мне всё равно, меня вообще не задевают отказы</span></label>
+      </div>
+      <div class="field-error" id="err_q8">Выберите один из вариантов</div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="question-block">
+      <div class="q-num">Вопрос 9 из 12</div>
+      <div class="q-text">Вам дали скрипт, но вы чувствуете что он не работает. Что делаете? <span class="required-star">*</span></div>
+      <div class="choices" id="q9">
+        <label class="choice-label" onclick="selectChoice(this,'q9')"><input type="radio" name="q9" value="2"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Работаю по скрипту всю неделю как договорились, фиксирую на каком этапе теряю людей, в конце иду к руководителю с конкретикой</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q9')"><input type="radio" name="q9" value="1"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Молча делаю как сказали, даже если результата нет</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q9')"><input type="radio" name="q9" value="0"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Сразу начинаю писать по-своему — я лучше чувствую людей</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q9')"><input type="radio" name="q9" value="0"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Говорю руководителю что скрипт плохой и отказываюсь работать по нему</span></label>
+      </div>
+      <div class="field-error" id="err_q9">Выберите один из вариантов</div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="question-block">
+      <div class="q-num">Вопрос 10 из 12</div>
+      <div class="q-text">Руководитель говорит: "Твои тексты слабые, люди не отвечают." Что ответишь? <span class="required-star">*</span></div>
+      <div class="choices" id="q10">
+        <label class="choice-label" onclick="selectChoice(this,'q10')"><input type="radio" name="q10" value="2"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Понял. Покажите пример что зашло — переделаю завтра</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q10')"><input type="radio" name="q10" value="1"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Хорошо, постараюсь улучшить</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q10')"><input type="radio" name="q10" value="0"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">А можно узнать конкретно что не так? Мне кажется проблема не только в текстах</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q10')"><input type="radio" name="q10" value="0"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Принято. Буду писать больше, может статистика вырастет</span></label>
+      </div>
+      <div class="field-error" id="err_q10">Выберите один из вариантов</div>
+    </div>
+
+    <!-- Q11 -->
+    <div class="question-block">
+      <div class="q-num">Вопрос 11 из 12</div>
+      <div class="q-text">Три недели работы, результата почти нет. Руководитель говорит что это нормально для старта. Коллеги уже закрывают сделки. Что происходит у вас в голове? <span class="required-star">*</span></div>
+      <div class="choices" id="q11">
+        <label class="choice-label" onclick="selectChoice(this,'q11')"><input type="radio" name="q11" value="2"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Хочу понять где именно теряю людей — попрошу разобрать мои переписки и посмотрю на чём закрывают коллеги</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q11')"><input type="radio" name="q11" value="1"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Верю что результат придёт, продолжаю делать своё</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q11')"><input type="radio" name="q11" value="0"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Три недели — это уже достаточно чтобы понять работает ли система вообще</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q11')"><input type="radio" name="q11" value="0"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">Скорее всего мне просто попалась холодная база, у других лучше контакты</span></label>
+      </div>
+      <div class="field-error" id="err_q11">Выберите один из вариантов</div>
+    </div>
+
+    <!-- Q12 -->
+    <div class="question-block">
+      <div class="q-num">Вопрос 12 из 12</div>
+      <div class="q-text">Вам нужно написать первое сообщение незнакомому человеку от лица развлекательной онлайн-платформы. Какой вариант выберете? <span class="required-star">*</span></div>
+      <div class="choices" id="q12">
+        <label class="choice-label" onclick="selectChoice(this,'q12')"><input type="radio" name="q12" value="2"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">"Привет! Наткнулся на тебя и решил написать — у нас сейчас интересные условия для новых пользователей. Есть минута?"</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q12')"><input type="radio" name="q12" value="1"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">"Здравствуйте! Меня зовут Иван, я представляю платформу X. Хотел бы рассказать вам о наших услугах и специальных предложениях для новых пользователей."</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q12')"><input type="radio" name="q12" value="0"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">"Привет! Хочешь зарабатывать от 50.000 в месяц не выходя из дома? У нас есть для тебя предложение!"</span></label>
+        <label class="choice-label" onclick="selectChoice(this,'q12')"><input type="radio" name="q12" value="0"><div class="choice-marker"><div class="choice-marker-inner"></div></div><span class="choice-text">"Добрый день! Вас беспокоит представитель компании X. Наша платформа предлагает уникальные возможности. Перейдите по ссылке чтобы узнать подробнее."</span></label>
+      </div>
+      <div class="field-error" id="err_q12">Выберите один из вариантов</div>
+    </div>
+
+    <div class="submit-area">
+      <button type="button" class="submit-btn" id="submit-btn" onclick="submitForm()">
+        <span id="btn-text">Отправить анкету</span>
+        <div class="spinner" id="btn-spinner"></div>
+      </button>
+      <div class="submit-note">Нажимая «Отправить», вы соглашаетесь на обработку данных. Мы изучим анкету и свяжемся с вами в Telegram в течение 3 рабочих дней.</div>
+    </div>
+  </form>
+</div>
+
+<div class="success-screen" id="success-screen">
+  <div class="success-icon">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c97a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+  </div>
+  <h2>Анкета отправлена!</h2>
+  <p>Мы изучим ваши ответы и свяжемся с вами в Telegram в течение 3 рабочих дней.</p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  var START_TIME = Date.now();
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz-sZzJPlQRSrKVMsO6J5jEAGaORzmFwv192VP3BsSO_twZm32p9RV2XMFStnOtih_j/exec';
+
+  var SCORES = {};
+
+  function selectChoice(label, group) {
+    document.querySelectorAll('#' + group + ' .choice-label').forEach(function(l) {
+      l.classList.remove('selected');
+    });
+    label.classList.add('selected');
+    var input = label.querySelector('input');
+    if (input) {
+      input.checked = true;
+      SCORES[group] = parseInt(input.value) || 0;
+    }
+    var err = document.getElementById('err_' + group);
+    if (err) err.classList.remove('show');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    var filled = 0;
+    if (document.getElementById('q_name').value.trim()) filled++;
+    if (document.getElementById('q_tg').value.trim()) filled++;
+    ['q3','q4','q5','q6','q7','q8','q9','q10','q11','q12'].forEach(function(name) {
+      if (document.querySelector('input[name="' + name + '"]:checked')) filled++;
+    });
+    document.getElementById('progress-count').textContent = filled + ' / 12';
+    document.getElementById('progress-fill').style.width = Math.round((filled / 12) * 100) + '%';
+  }
+
+  function getTotal() {
+    var total = 0;
+    ['q3','q4','q5','q6','q7','q8','q9','q10','q11','q12'].forEach(function(q) {
+      total += (SCORES[q] || 0);
+    });
+    return total;
+  }
+
+  function getSegment(total) {
+    if (total >= 19) return 'Приоритет';
+    if (total >= 13) return 'Резерв';
+    return 'Отсев';
+  }
+
+  function getRadio(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : '';
+  }
+
+  function validate() {
+    var ok = true;
+    function req(id, errId) {
+      var el = document.getElementById(id);
+      var err = document.getElementById(errId);
+      if (!el || !el.value.trim()) { if (err) err.classList.add('show'); ok = false; }
+      else { if (err) err.classList.remove('show'); }
+    }
+    function radio(name, errId) {
+      var checked = document.querySelector('input[name="' + name + '"]:checked');
+      var err = document.getElementById(errId);
+      if (!checked) { if (err) err.classList.add('show'); ok = false; }
+      else { if (err) err.classList.remove('show'); }
+    }
+    req('q_name', 'err_name');
+    req('q_tg', 'err_tg');
+    ['q3','q4','q5','q6','q7','q8','q9','q10','q11','q12'].forEach(function(q) {
+      radio(q, 'err_' + q);
+    });
+    return ok;
+  }
+
+  function showToast(msg, isError) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast' + (isError ? ' error' : '') + ' show';
+    setTimeout(function() { t.className = 'toast'; }, 3500);
+  }
+
+  function submitForm() {
+    if (!validate()) {
+      showToast('Заполните все обязательные поля', true);
+      var firstErr = document.querySelector('.field-error.show');
+      if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    var elapsed = Math.max(1, Math.round((Date.now() - START_TIME) / 1000 / 60));
+    var total = getTotal();
+    var segment = getSegment(total);
+
+    var payload = {
+      timestamp: new Date().toLocaleString('ru-RU'),
+      name: document.getElementById('q_name').value.trim(),
+      telegram: document.getElementById('q_tg').value.trim(),
+      time_minutes: elapsed,
+      q3_expectations: getRadio('q3'),
+      q4_motivation: getRadio('q4'),
+      q5_availability: getRadio('q5'),
+      q6_discipline: getRadio('q6'),
+      q7_monotony: getRadio('q7'),
+      q8_stress_daily: getRadio('q8'),
+      q9_script: getRadio('q9'),
+      q10_feedback: getRadio('q10'),
+      q11_stress_week: getRadio('q11'),
+      q12_first_message: getRadio('q12'),
+      total_score: total,
+      segment: segment
+    };
+
+    var btn = document.getElementById('submit-btn');
+    var btnText = document.getElementById('btn-text');
+    var spinner = document.getElementById('btn-spinner');
+    btn.disabled = true;
+    btnText.textContent = 'Отправка...';
+    spinner.style.display = 'block';
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(function() {
+      document.getElementById('main-form').style.display = 'none';
+      document.getElementById('success-screen').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    })
+    .catch(function() {
+      btn.disabled = false;
+      btnText.textContent = 'Отправить анкету';
+      spinner.style.display = 'none';
+      showToast('Ошибка отправки. Проверьте подключение.', true);
+    });
+  }
+</script>
+</body>
+</html>
